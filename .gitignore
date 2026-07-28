@@ -1,0 +1,12 @@
+# Xmake output
+build/
+.xmake/
+
+# Profiling output
+perf.data
+perf.data.old
+perf.data*
+
+# Editor/tool output
+compile_commands.json
+.cache/
