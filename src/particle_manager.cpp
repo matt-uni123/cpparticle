@@ -1,4 +1,5 @@
 #include "particle_manager.h"
+#include <cmath>
 #include <iostream>
 #include <optional>
 #include <ostream>
@@ -36,15 +37,16 @@ Vector2 particle_manager::bounded_random_coords() {
 
 void particle_manager::update() {
   if (!particle_pool.empty()) {
+    collision_loop();
     for (auto &p : particle_pool) {
       move_particle(p);
     }
   }
 }
 
-void particle_manager::spawn_particles_at_random_pos(int n) {
+void particle_manager::spawn_particles_at_random_pos(int n, float radius) {
   for (int i = 0; i < n; i++) {
-    create_particle(bounded_random_coords(), {10.0, 9.0});
+    create_particle(bounded_random_coords(), {10.0, 9.0}, radius);
   }
 }
 
@@ -54,6 +56,25 @@ std::vector<Vector2> particle_manager::get_coords() const {
     coords_vec.emplace_back(Vector2{p.coords.x, p.coords.y});
   }
   return coords_vec;
+}
+
+bool particle_manager::particle_collision(const Particle &p1,
+                                          const Particle &p2) const {
+  auto delta_x = p1.coords.x - p2.coords.x;
+  auto delta_y = p1.coords.y - p2.coords.y;
+  auto distance = std::sqrt(((delta_x * delta_x) + (delta_y * delta_y)));
+
+  return distance <= (p1.radius + p2.radius);
+}
+
+void particle_manager::collision_loop() {
+  for (std::size_t i = 0; i < particle_pool.size(); ++i) {
+    for (std::size_t j = i + 1; j < particle_pool.size(); ++j) {
+      if (particle_collision(particle_pool[i], particle_pool[j])) {
+        std::cout << "COLLISION";
+      }
+    }
+  }
 }
 
 std::optional<BoundSide>

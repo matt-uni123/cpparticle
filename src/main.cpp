@@ -1,7 +1,5 @@
 #include "particle_manager.h"
-#include <iostream>
 #include <raylib.h>
-
 int main(int argc, char **argv) {
   constexpr float windowWidth = 800.0f;
   constexpr float windowHeight = 600.0f;
@@ -12,7 +10,7 @@ int main(int argc, char **argv) {
   auto pm = particle_manager(radius, windowWidth - radius,
                              windowHeight - radius, radius);
 
-  pm.spawn_particles_at_random_pos(5);
+  pm.spawn_particles_at_random_pos(5, radius);
 
   while (!WindowShouldClose()) {
     BeginDrawing();

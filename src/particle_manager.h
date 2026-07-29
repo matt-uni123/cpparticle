@@ -25,11 +25,12 @@ class Particle {
 public:
   Vector2 coords;
   Vector2 velocity;
+  float radius;
   friend class particle_manager;
 
 private:
-  Particle(Vector2 coords, Vector2 velocity)
-      : coords(coords), velocity(velocity) {}
+  Particle(Vector2 coords, Vector2 velocity, float radius)
+      : coords(coords), velocity(velocity), radius(radius) {}
   Particle operator=(const Particle &) = delete;
 };
 
@@ -38,13 +39,12 @@ public:
   particle_manager(float left, float right, float top, float bottom)
       : container(Bounds{left, right, top, bottom}) {}
 
-  void create_particle(Vector2 coords, Vector2 velocity) {
-    particle_pool.emplace_back(Particle(coords, velocity));
+  void create_particle(Vector2 coords, Vector2 velocity, float radius) {
+    particle_pool.emplace_back(Particle(coords, velocity, radius));
   }
 
   void update();
-  Vector2 bounded_random_coords();
-  void spawn_particles_at_random_pos(int n);
+  void spawn_particles_at_random_pos(int n, float radius);
 
   std::vector<Vector2> get_coords() const;
   const float get_bound(BoundSide side) const;
@@ -53,7 +53,9 @@ public:
 private:
   std::vector<Particle> particle_pool;
 
+  Vector2 bounded_random_coords();
+  bool particle_collision(const Particle &p1, const Particle &p2) const;
+  void collision_loop();
   void move_particle(Particle &p);
   std::optional<BoundSide> find_edge_collision(const Particle &p) const;
-  bool is_particle_collision(const Particle &p) const;
 };
