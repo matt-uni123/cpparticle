@@ -1,4 +1,5 @@
 #include <cmath>
+constexpr float EPSILON = 1e-6f;
 namespace physics {
 struct Vector2 {
   float x;
@@ -12,6 +13,7 @@ struct Vector2 {
     return x * vec.x + y * vec.y;
   }
   constexpr Vector2 normalise() const {
+    // Avoid division by zero
     if (is_close_to_zero()) {
       return {0.0, 0.0};
     }
@@ -68,7 +70,7 @@ struct Vector2 {
 
   constexpr bool is_close_to_zero() const {
     float lengthSq = length_squared();
-    return lengthSq < 1.0e-30;
+    return lengthSq < EPSILON * EPSILON;
   }
 
   constexpr float angle() const { return std::atan2(y, x); }
