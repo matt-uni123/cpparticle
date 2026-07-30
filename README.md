@@ -1,34 +1,48 @@
 # cpparticle
 
-`cpparticle` is a small particle simulation written in C++ using [raylib](https://www.raylib.com/) and built with [xmake](https://xmake.io/).
+A small particle simulation written in C++ with raylib.
 
-The project currently supports:
+This project is mainly a way for me to learn C++ game/physics programming, including vector math, particle movement, collision handling, and structuring a project.
 
-- Spawning particles at random positions
-- Updating particle position and velocity
-- Detecting collisions with container edges
-- Rendering particles in a raylib window
-- A custom `Vector2` type for simulation math
-- Basic vector operations and near-zero checks
-- Conversion between the custom vector type and raylib's `Vector2`
+## Current features
 
-## Requirements
+- Particle spawning at random coordinates
+- Position and velocity updates
+- Collision with the simulation bounds
+- Collision with other particles
+- Particle rendering with raylib
 
-- A C++ compiler
-- xmake
-- raylib
-- C++20
+- Custom `physics::Vector2` implementation
+- Vector magnitude and squared magnitude
+- Dot products
+- Vector normalization
+- Arithmetic operators
+- Angle and perpendicular-vector helpers
+- Vector reflection
+  
+## Dependencies
 
-## Build and run
+- C++
+- [raylib](https://www.raylib.com/)
+- [xmake](https://xmake.io/)
+- 
+Dependencies are handled through xmake.
 
-Debug build:
+## Build
+
+Clone the repository and run:
 
 ```sh
 xmake
+```
+
+Then start the simulation with:
+
+```sh
 xmake run cpparticle
 ```
 
-Release build:
+For a release build:
 
 ```sh
 xmake f -m release
@@ -39,24 +53,18 @@ xmake run cpparticle
 ## Project structure
 
 ```text
-src/
-├── main.cpp
-├── particle_manager.cpp
-├── particle_manager.h
-└── vector2.h
-xmake.lua
+cpparticle/
+├── src/
+│   ├── Vector2.h
+│   ├── main.cpp
+│   ├── particle_manager.cpp
+│   └── particle_manager.h
+├── xmake.lua
+└── README.md
 ```
 
-## Current development
+## About
 
-The simulation now has its own `Vector2` implementation instead of relying on raylib's vector type for internal simulation logic.
+This is an early-stage learning project, so the implementation and structure will change as I learn.
 
-This helps keep the simulation and math code separate from the rendering library. Values are converted to raylib types only when needed for rendering.
-
-Collision handling currently includes container-edge collision detection, while particle movement is driven by position and velocity updates.
-
-## Status
-
-This is an early-stage learning project focused on building a particle simulation in C++ incorporating collision detection systems and vector math
-
-Planned development includes improving particle behaviour, better collision handling, math utilities, and rendering.
+Current areas of focus include improving collision handling, particle behaviour, vector math, and separating simulation logic from rendering.
