@@ -5,6 +5,7 @@
 #include <ostream>
 #include <random>
 #include <raylib.h>
+#include <stdexcept>
 #include <unistd.h>
 
 std::mt19937 rng{std::random_device{}()};
@@ -24,12 +25,13 @@ const float particle_manager::get_bound(BoundSide side) const {
   case BoundSide::Bottom:
     return container.bounds.bottom;
   }
+  throw std::invalid_argument("Invalid BoundSide");
 }
 
-Vector2 particle_manager::bounded_random_coords() {
+physics::Vector2 particle_manager::bounded_random_coords() {
   float x = random_float(0, get_bound(BoundSide::Right));
   float y = random_float(0, get_bound(BoundSide::Top));
-  Vector2 rand_coords{x, y};
+  physics::Vector2 rand_coords{x, y};
   std::cout << "Random coords are: " << rand_coords.x << ',' << rand_coords.y
             << '\n';
   return rand_coords;
@@ -50,10 +52,10 @@ void particle_manager::spawn_particles_at_random_pos(int n, float radius) {
   }
 }
 
-std::vector<Vector2> particle_manager::get_coords() const {
-  std::vector<Vector2> coords_vec;
+std::vector<physics::Vector2> particle_manager::get_coords() const {
+  std::vector<physics::Vector2> coords_vec;
   for (const auto &p : particle_pool) {
-    coords_vec.emplace_back(Vector2{p.coords.x, p.coords.y});
+    coords_vec.emplace_back(physics::Vector2{p.coords.x, p.coords.y});
   }
   return coords_vec;
 }
@@ -64,7 +66,12 @@ bool particle_manager::particle_collision(const Particle &p1,
   auto delta_y = p1.coords.y - p2.coords.y;
   auto distance = std::sqrt(((delta_x * delta_x) + (delta_y * delta_y)));
 
-  return distance <= (p1.radius + p2.radius);
+  if (distance <= (p1.radius + p2.radius)) {
+    const float magnitude = sqrt((delta_x * delta_x) + (delta_y + delta_y));
+    const physics::Vector2 unit_normal_vector = {(delta_x / magnitude),
+                                                 (delta_y / magnitude)};
+  }
+  return false;
 }
 
 void particle_manager::collision_loop() {

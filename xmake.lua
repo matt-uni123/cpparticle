@@ -5,6 +5,7 @@ target("cpparticle")
 set_kind("binary")
 add_files("src/*.cpp")
 add_packages("fmt", "raylib")
+set_languages("cxx20")
 
 if is_mode("releasedbg") then
 	set_symbols("debug")
