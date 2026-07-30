@@ -25,7 +25,6 @@ This project is mainly a way for me to learn C++ game/physics programming, inclu
 - C++
 - [raylib](https://www.raylib.com/)
 - [xmake](https://xmake.io/)
-- 
 Dependencies are handled through xmake.
 
 ## Build
