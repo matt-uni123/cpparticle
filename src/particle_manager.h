@@ -56,7 +56,7 @@ private:
   std::vector<Particle> particle_pool;
 
   physics::Vector2 bounded_random_coords();
-  bool particle_collision(const Particle &p1, const Particle &p2) const;
+  void detect_particle_collision(Particle &p1, Particle &p2) const;
   void collision_loop();
   void move_particle(Particle &p);
   std::optional<BoundSide> find_edge_collision(const Particle &p) const;

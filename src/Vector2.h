@@ -6,28 +6,29 @@ struct Vector2 {
   float y;
 
   constexpr Vector2(float x, float y) : x(x), y(y) {}
-  constexpr float length() const { return std::sqrt((x * x + y * y)); }
-  constexpr float length_squared() const { return x * x + y * y; }
+  constexpr float magnitude() const { return std::sqrt((x * x + y * y)); }
+  constexpr float magnitude_squared() const { return x * x + y * y; }
 
   constexpr float dot(const Vector2 &vec) const {
     return x * vec.x + y * vec.y;
   }
+  constexpr Vector2 vector_to(const Vector2 &vec) const {
+    return Vector2{vec.x - x, vec.y - y};
+  };
+  constexpr float distance_to(const Vector2 &vec) const {
+    return vector_to(vec).magnitude();
+  };
+  constexpr float distance_squared_to(const Vector2 &vec) const {
+    return vector_to(vec).magnitude_squared();
+  };
   constexpr Vector2 normalise() const {
     // Avoid division by zero
     if (is_close_to_zero()) {
       return {0.0, 0.0};
     }
-    const auto len = length();
-    return {x / len, y / len};
+    const auto mag = magnitude();
+    return {x / mag, y / mag};
   }
-  constexpr Vector2 direction(const Vector2 &vec) const {
-    return Vector2{vec.x - x, vec.y - y};
-  };
-  constexpr float direction_sqaured(const Vector2 &vec) const {
-    const auto dx = vec.x - x;
-    const auto dy = vec.y - y;
-    return dx * dx + dy * dy;
-  };
   constexpr Vector2 operator+(const Vector2 &vec) const {
     return {x + vec.x, y + vec.y};
   }
@@ -38,7 +39,7 @@ struct Vector2 {
     return {scalar * x, scalar * y};
   }
   constexpr Vector2 operator/(const float scalar) const {
-    return {scalar / x, scalar / y};
+    return {x / scalar, y / scalar};
   }
   constexpr Vector2 operator+=(const Vector2 &vec) {
     x = x + vec.x;
@@ -69,8 +70,8 @@ struct Vector2 {
   }
 
   constexpr bool is_close_to_zero() const {
-    float lengthSq = length_squared();
-    return lengthSq < EPSILON * EPSILON;
+    float magSq = magnitude_squared();
+    return magSq < EPSILON * EPSILON;
   }
 
   constexpr float angle() const { return std::atan2(y, x); }
