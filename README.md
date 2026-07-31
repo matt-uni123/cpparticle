@@ -1,24 +1,43 @@
 # cpparticle
 
-`cpparticle` is a small particle simulation written in C++ using [raylib](https://www.raylib.com/) and built with [xmake](https://xmake.io/).
+A small particle simulation written in C++ with raylib.
 
-The project currently supports:
+This project is mainly a way for me to learn C++ game/physics programming, including vector math, particle movement, collision handling, and structuring a project.
 
-- Spawning particles at random positions
-- Updating particle position and velocity
-- Detecting collisions with container edges
-- Rendering particles in a raylib window
+## Current features
 
-## Requirements
+- Particle spawning at random coordinates
+- Position and velocity updates
+- Collision with the simulation bounds
+- Collision with other particles
+- Particle rendering with raylib
 
-- A C++ compiler
-- xmake
-- raylib
+- Custom `physics::Vector2` implementation
+- Vector magnitude and squared magnitude
+- Dot products
+- Vector normalization
+- Arithmetic operators
+- Angle and perpendicular-vector helpers
+- Vector reflection
+  
+## Dependencies
 
-## Build and run
+- C++
+- [raylib](https://www.raylib.com/)
+- [xmake](https://xmake.io/)
+Dependencies are handled through xmake.
+
+## Build
+
+Clone the repository and run:
 
 ```sh
 xmake
+```
+
+Then start the simulation with:
+
+```sh
 xmake run cpparticle
 ```
 
@@ -33,13 +52,18 @@ xmake run cpparticle
 ## Project structure
 
 ```text
-src/
-├── main.cpp
-├── particle_manager.cpp
-└── particle_manager.h
-xmake.lua
+cpparticle/
+├── src/
+│   ├── Vector2.h
+│   ├── main.cpp
+│   ├── particle_manager.cpp
+│   └── particle_manager.h
+├── xmake.lua
+└── README.md
 ```
 
-## Status
+## About
 
-This is an early-stage learning project. Particle behaviour, collision handling, and rendering are still being developed.
+This is an early-stage learning project, so the implementation and structure will change as I learn.
+
+Current areas of focus include improving collision handling, particle behaviour, vector math, and separating simulation logic from rendering.

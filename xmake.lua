@@ -4,7 +4,7 @@ add_requires("fmt", "raylib")
 target("cpparticle")
 set_kind("binary")
 add_files("src/*.cpp")
-add_packages("fmt", "raylib")
+add_packages("raylib")
 
 if is_mode("releasedbg") then
 	set_symbols("debug")
