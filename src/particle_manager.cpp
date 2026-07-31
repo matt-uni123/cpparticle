@@ -1,9 +1,8 @@
 #include "particle_manager.h"
+#include <cassert>
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
 #include <optional>
-#include <ostream>
 #include <random>
 #include <raylib.h>
 #include <stdexcept>
@@ -18,23 +17,21 @@ float random_float(float min, float max) {
 const float particle_manager::get_bound(BoundSide side) const {
   switch (side) {
   case BoundSide::Left:
-    return container.bounds.left;
+    return config.bounds.left;
   case BoundSide::Right:
-    return container.bounds.right;
+    return config.bounds.right;
   case BoundSide::Top:
-    return container.bounds.top;
+    return config.bounds.top;
   case BoundSide::Bottom:
-    return container.bounds.bottom;
+    return config.bounds.bottom;
   }
   throw std::invalid_argument("Invalid BoundSide");
 }
 
-physics::Vector2 particle_manager::bounded_random_coords() {
-  float x = random_float(30.f, get_bound(BoundSide::Right) - 30.0f);
-  float y = random_float(30.f, get_bound(BoundSide::Top) - 30.f);
-  physics::Vector2 rand_coords{x, y};
-  std::cout << "Random coords are: " << rand_coords.x << ',' << rand_coords.y
-            << '\n';
+geometry::Vector2<float> particle_manager::bounded_random_coords(float radius) {
+  float x = random_float(0.0f + radius, get_bound(BoundSide::Right) - radius);
+  float y = random_float(0.0f + radius, get_bound(BoundSide::Top) - radius);
+  geometry::Vector2<float> rand_coords{x, y};
   return rand_coords;
 }
 
@@ -47,16 +44,16 @@ void particle_manager::update() {
   }
 }
 
-void particle_manager::spawn_particles_at_random_pos(int n, float radius) {
-  for (int i = 0; i < n; i++) {
-    create_particle(bounded_random_coords(), {5.0, 3.0}, radius);
+void particle_manager::spawn_particles_at_random_pos(float radius) {
+  for (int i = 0; i < config.max_particles; i++) {
+    create_particle(bounded_random_coords(radius), {5.0, 3.0}, radius);
   }
 }
 
-std::vector<physics::Vector2> particle_manager::get_coords() const {
-  std::vector<physics::Vector2> coords_vec;
+std::vector<geometry::Vector2<float>> particle_manager::get_coords() const {
+  std::vector<geometry::Vector2<float>> coords_vec;
   for (const auto &p : particle_pool) {
-    coords_vec.emplace_back(physics::Vector2{p.coords.x, p.coords.y});
+    coords_vec.emplace_back(geometry::Vector2<float>{p.coords.x, p.coords.y});
   }
   return coords_vec;
 }
@@ -71,7 +68,6 @@ void collision_resolution(Particle &p1, Particle &p2,
     const auto normal = {1, 0};
   }
   const auto normal = displacement / distance;
-  std::cout << "Normal magnitude: " << normal.magnitude() << '\n';
   const float overlap = (p1.radius + p2.radius) - distance;
   const auto is_overlap = overlap > 0;
 
@@ -82,12 +78,11 @@ void collision_resolution(Particle &p1, Particle &p2,
 
   const auto relative_vel = p2.velocity - p1.velocity;
   const auto normal_speed = relative_vel.dot(normal);
-
   if (normal_speed < 0) {
     // Hardcoded restitution: 0.5
     // Hardcoded mass = 1.0
-    const auto impulse = -1 * (((1 + 0.9) * normal_speed) / 2);
-    const physics::Vector2 impulse_vec = normal * impulse;
+    const auto impulse = -1 * (((1 + 0.5) * normal_speed) / 2);
+    const geometry::Vector2<float> impulse_vec = normal * impulse;
     p1.velocity -= impulse_vec;
     p2.velocity += impulse_vec;
     const auto v_rel_after = p2.velocity - p1.velocity;
@@ -114,16 +109,16 @@ void particle_manager::collision_loop() {
 
 std::optional<BoundSide>
 particle_manager::find_edge_collision(const Particle &p) const {
-  if (p.coords.x + p.velocity.x >= container.bounds.right) {
+  if (p.coords.x + p.radius >= config.bounds.right) {
     return BoundSide::Right;
   }
-  if (p.coords.x + p.velocity.x <= container.bounds.left) {
+  if (p.coords.x - p.radius <= config.bounds.left) {
     return BoundSide::Left;
   }
-  if (p.coords.y + p.velocity.y >= container.bounds.top) {
+  if (p.coords.y + p.radius >= config.bounds.top) {
     return BoundSide::Top;
   }
-  if (p.coords.y + p.velocity.y <= container.bounds.bottom) {
+  if (p.coords.y - p.radius <= config.bounds.bottom) {
     return BoundSide::Bottom;
   }
 

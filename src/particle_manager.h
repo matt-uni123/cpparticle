@@ -1,63 +1,56 @@
 #include "Vector2.h"
-#include <array>
-#include <execution>
 #include <optional>
-#include <raylib.h>
-#include <utility>
+#include <vector>
 enum class BoundSide { Left, Right, Top, Bottom };
-
-struct Bounds {
-  float left;
-  float right;
-  float top;
-  float bottom;
-};
-
-class particle_container {
-public:
-  Bounds bounds;
-  friend class particle_manager;
-
-private:
-  particle_container(Bounds bounds) : bounds(bounds) {}
-};
 
 class Particle {
 public:
-  physics::Vector2 coords;
-  physics::Vector2 velocity;
+  geometry::Vector2<float> coords;
+  geometry::Vector2<float> velocity;
   float radius;
   friend class particle_manager;
 
 private:
-  Particle(physics::Vector2 coords, physics::Vector2 velocity, float radius)
+  Particle(geometry::Vector2<float> coords, geometry::Vector2<float> velocity,
+           float radius)
       : coords(coords), velocity(velocity), radius(radius) {}
-  Particle operator=(const Particle &) = delete;
+
+  Particle &operator=(const Particle &) = delete;
 };
 
 class particle_manager {
 public:
-  particle_manager(float left, float right, float top, float bottom)
-      : container(Bounds{left, right, top, bottom}) {}
+  struct Bounds {
+    float left;
+    float right;
+    float top;
+    float bottom;
+  };
+  struct Config {
+    Bounds bounds;
+    int max_particles;
+  };
+  explicit particle_manager(const Config &config) : config(config) {}
 
-  void create_particle(physics::Vector2 coords, physics::Vector2 velocity,
-                       float radius) {
+  void create_particle(geometry::Vector2<float> coords,
+                       geometry::Vector2<float> velocity, float radius) {
     particle_pool.emplace_back(Particle(coords, velocity, radius));
   }
 
   void update();
-  void spawn_particles_at_random_pos(int n, float radius);
+  void spawn_particles_at_random_pos(float radius);
 
-  std::vector<physics::Vector2> get_coords() const;
+  std::vector<geometry::Vector2<float>> get_coords() const;
   const float get_bound(BoundSide side) const;
-  particle_container container;
 
 private:
+  Config config;
   std::vector<Particle> particle_pool;
 
-  physics::Vector2 bounded_random_coords();
-  void detect_particle_collision(Particle &p1, Particle &p2) const;
-  void collision_loop();
+  geometry::Vector2<float> bounded_random_coords(float radius);
+
   void move_particle(Particle &p);
+  void detect_particle_collision(Particle &p1, Particle &p2) const;
   std::optional<BoundSide> find_edge_collision(const Particle &p) const;
+  void collision_loop();
 };
