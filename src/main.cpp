@@ -3,19 +3,21 @@
 int main(int argc, char **argv) {
   constexpr float windowWidth = 800.0f;
   constexpr float windowHeight = 600.0f;
-  constexpr float radius = 10.0f;
+  constexpr float radius = 15.0f;
   InitWindow(windowWidth, windowHeight, "Window");
   SetTargetFPS(60);
 
-  particle_manager manager(
-      {.bounds = {.left = 0.0f, .right = 800.0f, .top = 600.0f, .bottom = 0.0f},
-       .max_particles = 40});
+  ParticleManager::Config config{
+      .container_area = {.width = windowWidth, .height = windowHeight},
+      .max_particles = 20};
+
+  auto manager = ParticleManager(config);
+
   manager.spawn_particles_at_random_pos(radius);
 
   while (!WindowShouldClose()) {
     BeginDrawing();
     ClearBackground(BLACK);
-    DrawFPS(10, 10);
     std::vector<geometry::Vector2<float>> coords = manager.get_coords();
     Vector2 Vec2;
 
@@ -23,7 +25,7 @@ int main(int argc, char **argv) {
       Vec2.x = coords[i].x;
       Vec2.y = coords[i].y;
 
-      DrawCircleV(Vec2, radius, BLUE);
+      DrawCircleV(Vec2, radius, RED);
     }
 
     manager.update();

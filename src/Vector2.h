@@ -13,7 +13,6 @@ template <Scalar T> struct Vector2 {
   constexpr Vector2(T x, T y) : x(x), y(y) {}
   constexpr T magnitude() const { return std::sqrt((x * x + y * y)); }
   constexpr T magnitude_squared() const { return x * x + y * y; }
-
   constexpr T dot(const Vector2<T> &vec) const { return x * vec.x + y * vec.y; }
   constexpr Vector2<T> vector_to(const Vector2<T> &vec) const {
     return Vector2<T>{vec.x - x, vec.y - y};
@@ -64,22 +63,18 @@ template <Scalar T> struct Vector2 {
     y = y / scalar;
     return *this;
   }
-
   constexpr bool operator==(const Vector2<T> &vec) const {
     return x == vec.x && y == vec.y;
   };
   constexpr bool operator!=(const Vector2<T> &vec) const {
     return x != vec.x || y != vec.y;
   }
-
   constexpr bool is_close_to_zero() const {
     T magSq = magnitude_squared();
     return magSq < EPSILON * EPSILON;
   }
-
   constexpr T angle() const { return std::atan2(y, x); }
   constexpr Vector2<T> perpendicular() const { return {y * -1.0f, x}; };
-
   constexpr Vector2<T> reflect(const Vector2<T> &normal,
                                const Vector2<T> &v) const {
     const T dot = normal.dot(v);

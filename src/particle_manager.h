@@ -1,14 +1,12 @@
 #include "Vector2.h"
-#include <optional>
 #include <vector>
-enum class BoundSide { Left, Right, Top, Bottom };
 
 class Particle {
 public:
   geometry::Vector2<float> coords;
   geometry::Vector2<float> velocity;
   float radius;
-  friend class particle_manager;
+  friend class ParticleManager;
 
 private:
   Particle(geometry::Vector2<float> coords, geometry::Vector2<float> velocity,
@@ -18,39 +16,50 @@ private:
   Particle &operator=(const Particle &) = delete;
 };
 
-class particle_manager {
+class ParticleManager {
 public:
-  struct Bounds {
-    float left;
-    float right;
-    float top;
-    float bottom;
+  struct Area {
+    float width;
+    float height;
   };
+
   struct Config {
-    Bounds bounds;
+    Area container_area;
     int max_particles;
   };
-  explicit particle_manager(const Config &config) : config(config) {}
+  struct Collisions {
+    bool left;
+    bool right;
+    bool top;
+    bool bottom;
 
+    bool any() { return left || right || top || bottom; }
+    bool none() { return !any(); }
+  };
+
+  explicit ParticleManager(const Config &config) : config(config) {}
+
+  void update();
   void create_particle(geometry::Vector2<float> coords,
                        geometry::Vector2<float> velocity, float radius) {
     particle_pool.emplace_back(Particle(coords, velocity, radius));
   }
 
-  void update();
   void spawn_particles_at_random_pos(float radius);
 
   std::vector<geometry::Vector2<float>> get_coords() const;
-  const float get_bound(BoundSide side) const;
 
 private:
   Config config;
   std::vector<Particle> particle_pool;
-
   geometry::Vector2<float> bounded_random_coords(float radius);
-
   void move_particle(Particle &p);
-  void detect_particle_collision(Particle &p1, Particle &p2) const;
-  std::optional<BoundSide> find_edge_collision(const Particle &p) const;
+
+  void detect_particle_collision(Particle &p1, Particle &p2);
+  void collision_resolution(Particle &p1, Particle &p2,
+                            const float &distance_sq);
+  Collisions container_collisions(const Particle &p) const;
+  void keep_inside_container(Particle &p);
+
   void collision_loop();
 };
