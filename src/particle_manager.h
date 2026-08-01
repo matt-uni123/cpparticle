@@ -41,7 +41,9 @@ public:
                        geometry::Vector2<float> velocity, float radius) {
     particle_pool.emplace_back(Particle(coords, velocity, radius));
   }
-  void spawn_particles_at_random_pos(float radius);
+  void spawn_particles_at_random_pos(float radius, float min_x_velocity,
+                                     float min_y_velocity, float max_x_velocity,
+                                     float max_y_velocity);
   std::vector<geometry::Vector2<float>> get_coords() const;
 
 private:

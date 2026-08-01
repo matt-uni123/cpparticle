@@ -15,8 +15,8 @@ float random_float(float min, float max) {
 }
 
 geometry::Vector2<float> ParticleManager::bounded_random_coords(float radius) {
-  float x = random_float(0.0f + radius, config.container_area.width - radius);
-  float y = random_float(0.0f + radius, config.container_area.height - radius);
+  float x = random_float(radius, config.container_area.width - radius);
+  float y = random_float(radius, config.container_area.height - radius);
   geometry::Vector2<float> rand_coords{x, y};
   return rand_coords;
 }
@@ -31,7 +31,11 @@ void ParticleManager::update() {
   }
 }
 
-void ParticleManager::spawn_particles_at_random_pos(float radius) {
+void ParticleManager::spawn_particles_at_random_pos(float radius,
+                                                    float min_x_velocity,
+                                                    float min_y_velocity,
+                                                    float max_x_velocity,
+                                                    float max_y_velocity) {
   const float x = random_float(-10.0f, 10.0f);
   const float y = random_float(-10.0f, 10.0f);
   for (int i = 0; i < config.max_particles; i++) {
@@ -87,9 +91,9 @@ void ParticleManager::collision_resolution(Particle &p1, Particle &p2,
   const auto relative_vel = p2.velocity - p1.velocity;
   const auto normal_speed = relative_vel.dot(normal);
   if (normal_speed < 0) {
-    // Hardcoded restitution: 0.5
-    // Hardcoded mass = 1.0
-    const auto impulse = -1 * (((1 + 0.5) * normal_speed) / 2);
+    const float restitution = 0.7;
+    const float mass = 1;
+    const auto impulse = -1 * (((mass + restitution) * normal_speed) / 2);
     const geometry::Vector2<float> impulse_vec = normal * impulse;
     p1.velocity -= impulse_vec;
     p2.velocity += impulse_vec;
