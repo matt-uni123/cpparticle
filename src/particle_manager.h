@@ -22,7 +22,6 @@ public:
     float width;
     float height;
   };
-
   struct Config {
     Area container_area;
     int max_particles;
@@ -36,17 +35,13 @@ public:
     bool any() { return left || right || top || bottom; }
     bool none() { return !any(); }
   };
-
   explicit ParticleManager(const Config &config) : config(config) {}
-
   void update();
   void create_particle(geometry::Vector2<float> coords,
                        geometry::Vector2<float> velocity, float radius) {
     particle_pool.emplace_back(Particle(coords, velocity, radius));
   }
-
   void spawn_particles_at_random_pos(float radius);
-
   std::vector<geometry::Vector2<float>> get_coords() const;
 
 private:
@@ -55,11 +50,11 @@ private:
   geometry::Vector2<float> bounded_random_coords(float radius);
   void move_particle(Particle &p);
 
+  // Collision systems:
   void detect_particle_collision(Particle &p1, Particle &p2);
   void collision_resolution(Particle &p1, Particle &p2,
                             const float &distance_sq);
   Collisions container_collisions(const Particle &p) const;
   void keep_inside_container(Particle &p);
-
   void collision_loop();
 };
