@@ -13,16 +13,8 @@ float random_float(float min, float max) {
   std::uniform_real_distribution<float> distrbution(min, max);
   return distrbution(rng);
 }
-
-geometry::Vector2<float> ParticleManager::bounded_random_coords(float radius) {
-  float x = random_float(radius, config.container_area.width - radius);
-  float y = random_float(radius, config.container_area.height - radius);
-  geometry::Vector2<float> rand_coords{x, y};
-  return rand_coords;
-}
-
 void ParticleManager::update() {
-  if (!particle_pool.empty()) {
+  if (!paused && !particle_pool.empty()) {
     for (auto &p : particle_pool) {
       move_particle(p);
       collision_loop();
@@ -31,14 +23,18 @@ void ParticleManager::update() {
   }
 }
 
-void ParticleManager::spawn_particles_at_random_pos(float radius,
-                                                    float min_x_velocity,
-                                                    float min_y_velocity,
-                                                    float max_x_velocity,
-                                                    float max_y_velocity) {
-  const float x = random_float(-10.0f, 10.0f);
-  const float y = random_float(-10.0f, 10.0f);
+geometry::Vector2<float> ParticleManager::bounded_random_coords(float radius) {
+  float x = random_float(radius, config.container_area.width - radius);
+  float y = random_float(radius, config.container_area.height - radius);
+  geometry::Vector2<float> rand_coords{x, y};
+  return rand_coords;
+}
+
+void ParticleManager::spawn_particles_at_random_pos(float radius, float maxX,
+                                                    float maxY) {
   for (int i = 0; i < config.max_particles; i++) {
+    const float x = random_float(-maxX, maxX);
+    const float y = random_float(-maxX, maxY);
     create_particle(bounded_random_coords(radius), {x, y}, radius);
   }
 }
@@ -85,6 +81,8 @@ void ParticleManager::collision_resolution(Particle &p1, Particle &p2,
     p2.coords = p2.coords + half_correction;
   }
 
+  // Clamp function ran each time particle coordinates are moved
+  // Ensures particles are not moved outside of bounds.
   keep_inside_container(p1);
   keep_inside_container(p2);
 
@@ -97,6 +95,9 @@ void ParticleManager::collision_resolution(Particle &p1, Particle &p2,
     const geometry::Vector2<float> impulse_vec = normal * impulse;
     p1.velocity -= impulse_vec;
     p2.velocity += impulse_vec;
+
+    keep_inside_container(p1);
+    keep_inside_container(p2);
   }
 }
 
