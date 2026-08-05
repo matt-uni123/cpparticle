@@ -3,34 +3,37 @@
 #include <iostream>
 #include <raylib.h>
 int main(int argc, char **argv) {
-  //  cxxopts::Options options("paraticle simulator",
-  //                           "Parallel particle simulator made in c++");
-  //  options.add_options()("p, particles", "Amount of particles",
-  //                        cxxopts::value<int>()->default_value("100"))(
-  //      "t, threads", "Amount of  worker threads to use",
-  //      cxxopts::value<int>()->default_value("1"))(
-  //      "s, seed", "Random seed", cxxopts::value<int>()->default_value("42"))(
-  //      "b, benchmark", "Run program in benchmark mode",
-  //      cxxopts::value<int>()->default_value("0"))("h,help", "Show help");
-  //
-  //  try {
-  //    const auto result = options.parse(argc, argv);
-  //
-  //    if (result.count("help")) {
-  //      std::cout << options.help() << '\n';
-  //      return 0;
-  //    }
-  //    const int particle_amount = result["particles"].as<int>();
-  //    const int thread_amount = result["threads"].as<int>();
-  //    const bool benchmark_mode = result["benchmark"].as<bool>();
-  //
-  //    if (benchmark_mode) {
-  //      // Add benchmark mode code here.
-  //      //
-  //    }
-  //  } catch (const cxxopts::exceptions::exception &err) {
-  //    std::cerr << "Error: " << err.what() << '\n';
-  //  }
+  int particle_amount{};
+  int thread_amount{};
+  bool benchmark_mode{};
+  cxxopts::Options options("paraticle simulator",
+                           "Parallel particle simulator made in c++");
+  options.add_options()("p, particles", "Amount of particles",
+                        cxxopts::value<int>()->default_value("100"))(
+      "t, threads", "Amount of  worker threads to use",
+      cxxopts::value<int>()->default_value("1"))(
+      "s, seed", "Random seed", cxxopts::value<int>()->default_value("42"))(
+      "b, benchmark", "Run program in benchmark mode",
+      cxxopts::value<bool>()->default_value("0"))("h,help", "Show help");
+
+  try {
+    const auto result = options.parse(argc, argv);
+
+    if (result.count("help")) {
+      std::cout << options.help() << '\n';
+      return 0;
+    }
+    particle_amount = result["particles"].as<int>();
+    thread_amount = result["threads"].as<int>();
+    benchmark_mode = result["benchmark"].as<bool>();
+
+    if (benchmark_mode) {
+      // Add benchmark mode code here.
+      //
+    }
+  } catch (const cxxopts::exceptions::exception &err) {
+    std::cerr << "Error: " << err.what() << '\n';
+  }
 
   constexpr float windowWidth = 1600.0f;
   constexpr float windowHeight = 1000.0f;
@@ -40,7 +43,7 @@ int main(int argc, char **argv) {
 
   ParticleManager::Config config{
       .container_area = {.width = windowWidth, .height = windowHeight},
-      .max_particles = 100};
+      .max_particles = particle_amount};
 
   auto manager = ParticleManager(config);
 
