@@ -20,8 +20,8 @@ struct CellList {
   void add_particle_to_cell(const Particle &p, const std::size_t index);
   float get_index(const float x, const float y) const;
 
-  float cell_width = 100;
-  float cell_height = 62.5;
+  float cell_width;
+  float cell_height;
   std::array<Cell, CELL_AMOUNT> cells;
   std::array<Cell, CELL_AMOUNT> &get_cell_arry() const;
   Cell &get_cell();

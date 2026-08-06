@@ -39,7 +39,7 @@ public:
 
 private:
   Config config;
-  CellList cell_list{100, 62.5};
+  CellList cell_list{400, 250};
   std::vector<Particle> particle_pool;
   geometry::Vector2<float> bounded_random_coords(float radius);
   void move_particle(Particle &p);
