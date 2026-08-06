@@ -15,6 +15,7 @@ float random_float(float min, float max) {
 }
 void ParticleManager::update() {
   if (!paused && !particle_pool.empty()) {
+    cell_list.rebuild(particle_pool);
     for (auto &p : particle_pool) {
       move_particle(p);
       collision_loop();

@@ -1,6 +1,8 @@
+#ifndef VECTOR2_H
+#define VECTOR2_H
+
 #include <cmath>
 #include <concepts>
-
 constexpr float EPSILON = 1e-6f;
 template <typename T>
 concept Scalar = std::integral<T> || std::floating_point<T>;
@@ -83,3 +85,4 @@ template <Scalar T> struct Vector2 {
   }
 };
 } // namespace geometry
+#endif // !VECTOR2_H
