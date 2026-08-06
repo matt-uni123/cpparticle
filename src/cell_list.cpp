@@ -1,7 +1,5 @@
 #include "cell_list.hpp"
 #include <cmath>
-#include <execution>
-#include <iostream>
 #include <vector>
 
 void CellList::rebuild(const std::vector<Particle> &particle_pool) {

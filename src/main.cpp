@@ -1,5 +1,5 @@
 #include "cxxopts.hpp"
-#include "particle_manager.h"
+#include "particle_manager.hpp"
 #include <iostream>
 #include <raylib.h>
 int main(int argc, char **argv) {

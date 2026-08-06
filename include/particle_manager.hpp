@@ -1,5 +1,5 @@
-#ifndef PARTICLE_MANAGER_H
-#define PARTICLE_MANAGER_H
+#ifndef PARTICLE_MANAGER_HPP
+#define PARTICLE_MANAGER_HPP
 #include "CommonTypes.hpp"
 #include "Vector2.hpp"
 #include "cell_list.hpp"
@@ -52,4 +52,4 @@ private:
   void keep_inside_container(Particle &p);
   void collision_loop();
 };
-#endif // !PARTICLE_MANAGER_H
+#endif // !PARTICLE_MANAGER_HPP

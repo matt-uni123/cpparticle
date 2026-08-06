@@ -1,10 +1,12 @@
 add_rules("mode.debug", "mode.release", "mode.releasedbg")
+set_languages("cxx20")
 add_requires("fmt", "raylib")
-
+add_rules("plugin.compile_commands.autoupdate")
 target("cpparticle")
 set_kind("binary")
 add_files("src/*.cpp")
 add_packages("raylib")
+add_includedirs("include")
 
 if is_mode("releasedbg") then
 	set_symbols("debug")

@@ -1,4 +1,4 @@
-#include "particle_manager.h"
+#include "particle_manager.hpp"
 #include <algorithm>
 #include <cassert>
 #include <cmath>
